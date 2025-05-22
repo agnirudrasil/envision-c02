@@ -9,10 +9,27 @@ import {
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { CheckboxFacet } from "./checkbox-facet";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
+import { start } from "repl";
 
 export function JobFilters({ facets }: { facets: any }) {
+  const searchParams = useSearchParams();
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  function handleSliderChange(value: number[]) {
+    console.log(value);
+    const newParams = new URLSearchParams(searchParams.toString());
+    if (value[0]) {
+      newParams.set("salary_min", (value[0] * 1000).toString());
+    } else {
+      newParams.delete("salary_min");
+    }
+    startTransition(() =>
+      router.push(`?${newParams.toString()}`, { scroll: false })
+    );
+  }
 
   return (
     <div className="rounded-lg border border-gray-800 bg-gray-900 p-4">
@@ -55,15 +72,21 @@ export function JobFilters({ facets }: { facets: any }) {
             <div className="space-y-4">
               <div className="flex justify-between">
                 <span className="text-xs text-gray-400">
-                  ${(facets.salary_min.max / 1000).toFixed(0)}k
+                  ${(facets.salary_min.min / 1000).toFixed(0)}k
                 </span>
                 <span className="text-xs text-gray-400">
-                  ${(facets.salary_max.max / 1000).toFixed(0)}k+
+                  ${(facets.salary_min.max / 1000).toFixed(0)}k+
                 </span>
               </div>
               <Slider
-                min={facets.salary_min.max / 1000}
-                max={facets.salary_max.max / 1000}
+                defaultValue={[
+                  searchParams.get("salary_min")
+                    ? parseFloat(searchParams.get("salary_min") || "0") / 1000
+                    : facets.salary_min.min / 1000,
+                ]}
+                onValueChange={handleSliderChange}
+                min={facets.salary_min.min / 1000}
+                max={facets.salary_min.max / 1000}
                 step={10}
               />
             </div>

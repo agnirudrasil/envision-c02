@@ -18,7 +18,7 @@ const getAllCompanies = async () => {
     },
   });
 
-  return result.aggregations?.companies.buckets.map((bucket: any) => ({
+  return (result.aggregations?.companies as any).buckets.map((bucket: any) => ({
     name: bucket.key,
     count: bucket.doc_count,
   }));

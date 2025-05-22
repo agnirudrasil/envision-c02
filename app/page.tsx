@@ -68,6 +68,7 @@ export default async function Home({
     job_type: searchParams.job_type as any,
     industry: searchParams.industry,
     experience_level: searchParams.experience_level as any,
+    salary_min: searchParams.salary_min ? searchParams.salary_min : undefined,
     page:
       typeof searchParams.page === "string"
         ? parseInt(searchParams.page) || 1

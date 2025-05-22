@@ -54,6 +54,7 @@ export async function searchJobs(filters: JobFilters) {
   }
 
   if (filters.salary_min) {
+    console.log("filters.salary_min", filters.salary_min);
     must.push({ range: { "salary.min": { gte: filters.salary_min } } });
   }
 
